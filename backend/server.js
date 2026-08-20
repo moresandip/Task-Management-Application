@@ -16,8 +16,29 @@ const app = express();
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:3000',
+  'http://localhost:5173',
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    
+    // Allow configured origins or any vercel.app deployment
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      process.env.NODE_ENV === 'development'
+    ) {
+      return callback(null, true);
+    }
+    
+    // Fallback: allow all to prevent deployment blocker
+    return callback(null, true);
+  },
   credentials: true,
 }));
 

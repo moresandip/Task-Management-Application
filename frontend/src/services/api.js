@@ -9,8 +9,17 @@ import axios from 'axios';
  * In production, set VITE_API_URL in your Vercel/Netlify environment variables
  * to your deployed backend URL, e.g. https://task-api.onrender.com/api
  */
+const getBaseUrl = () => {
+  let url = import.meta.env.VITE_API_URL || '/api';
+  url = url.trim().replace(/\/+$/, ''); // Remove trailing slashes
+  if (url !== '/api' && !url.endsWith('/api')) {
+    url = `${url}/api`;
+  }
+  return url;
+};
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
