@@ -48,7 +48,19 @@ app.use(express.urlencoded({ extended: true }));
 // ── Routes ────────────────────────────────────────────────────────────────────
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Task Management API is running 🚀' });
+  res.json({ message: 'Task Management API is running 🚀', status: 'OK' });
+});
+
+app.get('/api/health', (req, res) => {
+  const mongoose = require('mongoose');
+  const dbState = mongoose.connection.readyState;
+  const states = ['Disconnected', 'Connected', 'Connecting', 'Disconnecting'];
+  res.json({
+    status: 'OK',
+    server: 'Running',
+    database: states[dbState] || 'Unknown',
+    uptime: process.uptime(),
+  });
 });
 
 app.use('/api/auth', authRoutes);
