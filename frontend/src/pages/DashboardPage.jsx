@@ -10,6 +10,7 @@ import {
   ClipboardList,
   Loader2,
   AlertTriangle,
+  Sparkles,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import TaskCard from '../components/TaskCard';
@@ -142,6 +143,19 @@ function DashboardPage() {
     onError: () => toast.error('Failed to delete task'),
   });
 
+  // ── Seed sample tasks mutation ──────────────────────────────────────────────
+
+  const seedMutation = useMutation({
+    mutationFn: () => taskApi.seed(),
+    onSuccess: () => {
+      toast.success('✨ 4 Sample tasks created! Feel free to edit or delete them.');
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Failed to create sample tasks');
+    },
+  });
+
   // ── Handlers ────────────────────────────────────────────────────────────────
 
   const handleFilterChange = useCallback((key, value) => {
@@ -190,11 +204,29 @@ function DashboardPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Page header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">
-            Good day, <span className="text-brand-400">{user?.name?.split(' ')[0]}</span> 👋
-          </h1>
-          <p className="text-slate-400 text-sm mt-1">Here are all your tasks. Stay focused!</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white">
+              Good day, <span className="text-brand-400">{user?.name?.split(' ')[0]}</span> 👋
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">Here are all your tasks. Stay focused!</p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => seedMutation.mutate()}
+              disabled={seedMutation.isPending}
+              className="btn-ghost text-xs sm:text-sm border border-brand-500/30 text-brand-300 hover:bg-brand-500/10"
+              title="Add 4 pre-built realistic sample tasks"
+            >
+              <Sparkles size={14} className="text-brand-400" />
+              {seedMutation.isPending ? 'Adding...' : 'Add Sample Tasks'}
+            </button>
+            <button onClick={openCreateModal} className="btn-primary">
+              <Plus size={16} />
+              New Task
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -355,10 +387,20 @@ function DashboardPage() {
                 : 'Create your first task to get started!'}
             </p>
             {!hasActiveFilters && (
-              <button onClick={openCreateModal} className="btn-primary">
-                <Plus size={16} />
-                Create first task
-              </button>
+              <div className="flex items-center justify-center gap-3">
+                <button onClick={openCreateModal} className="btn-primary">
+                  <Plus size={16} />
+                  Create first task
+                </button>
+                <button
+                  onClick={() => seedMutation.mutate()}
+                  disabled={seedMutation.isPending}
+                  className="btn-ghost border border-brand-500/30 text-brand-300 hover:bg-brand-500/10"
+                >
+                  <Sparkles size={16} className="text-brand-400" />
+                  {seedMutation.isPending ? 'Adding...' : 'Load Sample Tasks'}
+                </button>
+              </div>
             )}
           </div>
         )}

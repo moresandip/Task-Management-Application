@@ -5,6 +5,7 @@ const {
   createTask,
   updateTask,
   deleteTask,
+  seedTasks,
 } = require('../controllers/taskController');
 const { protect } = require('../middleware/authMiddleware');
 const { uploadSingle } = require('../middleware/uploadMiddleware');
@@ -13,6 +14,8 @@ const router = express.Router();
 
 // All task routes require authentication
 router.use(protect);
+
+router.post('/seed', seedTasks);
 
 router.route('/')
   .get(getTasks)

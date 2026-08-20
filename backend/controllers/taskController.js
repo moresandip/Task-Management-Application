@@ -231,4 +231,79 @@ const deleteTask = async (req, res, next) => {
   }
 };
 
-module.exports = { getTasks, getTaskById, createTask, updateTask, deleteTask };
+// ── POST /api/tasks/seed ────────────────────────────────────────────────────────
+
+/**
+ * @desc    Seed sample demo tasks for the authenticated user
+ * @route   POST /api/tasks/seed
+ * @access  Private
+ */
+const seedSampleTasksForUser = async (userId) => {
+  const sampleTasks = [
+    {
+      user: userId,
+      title: 'Design Mobile App UI & Wireframes',
+      description: 'Review color palette, create high-fidelity Figma components, and finalize responsive navigation layout.',
+      status: 'IN_PROGRESS',
+      priority: 'HIGH',
+      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      location: 'Mumbai',
+      weather: { temp: 29, description: 'clear sky', icon: '01d', cityName: 'Mumbai' },
+    },
+    {
+      user: userId,
+      title: 'Setup MongoDB Atlas Cluster & API Endpoints',
+      description: 'Configure database indexes, connect Mongoose models, and test CRUD endpoints.',
+      status: 'DONE',
+      priority: 'HIGH',
+      dueDate: new Date(),
+      location: 'Pune',
+      weather: { temp: 26, description: 'scattered clouds', icon: '03d', cityName: 'Pune' },
+    },
+    {
+      user: userId,
+      title: 'Prepare Quarterly Sprint & Requirement Presentation',
+      description: 'Draft sprint progress report, document backlog items, and prepare presentation deck for stakeholder review.',
+      status: 'PENDING',
+      priority: 'MEDIUM',
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      location: 'Delhi',
+      weather: { temp: 32, description: 'haze', icon: '50d', cityName: 'Delhi' },
+    },
+    {
+      user: userId,
+      title: 'Finalize Cloudinary File Upload Integration',
+      description: 'Implement multer multipart storage handler, test file upload constraints and attachment links.',
+      status: 'IN_PROGRESS',
+      priority: 'LOW',
+      dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      location: 'Bangalore',
+      weather: { temp: 24, description: 'light rain', icon: '10d', cityName: 'Bangalore' },
+    },
+  ];
+
+  return await Task.insertMany(sampleTasks);
+};
+
+const seedTasks = async (req, res, next) => {
+  try {
+    const tasks = await seedSampleTasksForUser(req.user._id);
+    res.status(201).json({
+      message: 'Sample tasks created successfully',
+      count: tasks.length,
+      data: tasks,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getTasks,
+  getTaskById,
+  createTask,
+  updateTask,
+  deleteTask,
+  seedTasks,
+  seedSampleTasksForUser,
+};

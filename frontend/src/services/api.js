@@ -72,6 +72,7 @@ export const taskApi = {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
   delete: (id) => API.delete(`/tasks/${id}`),
+  seed: () => API.post('/tasks/seed'),
 };
 
 // ── Auth API helpers ──────────────────────────────────────────────────────────

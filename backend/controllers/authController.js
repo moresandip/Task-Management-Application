@@ -40,6 +40,14 @@ const register = async (req, res, next) => {
     // Create the user — password hashing is handled by the pre('save') hook in User.js
     const user = await User.create({ name, email, password });
 
+    // Automatically seed rich sample tasks for the new user
+    try {
+      const { seedSampleTasksForUser } = require('./taskController');
+      await seedSampleTasksForUser(user._id);
+    } catch (seedErr) {
+      console.warn('Could not auto-seed tasks:', seedErr.message);
+    }
+
     const token = generateToken(user._id);
 
     res.status(201).json({
