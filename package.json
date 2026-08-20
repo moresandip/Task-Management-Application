@@ -1,0 +1,14 @@
+{
+  "name": "task-management-app-root",
+  "version": "1.0.0",
+  "description": "Full-stack Task Management Application (MERN Stack)",
+  "scripts": {
+    "install-backend": "npm --prefix backend install",
+    "install-frontend": "npm --prefix frontend install",
+    "build": "npm --prefix backend install",
+    "start": "node backend/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
